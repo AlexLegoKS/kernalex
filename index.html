@@ -6,14 +6,12 @@
     <title>Alex Returns!</title>
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
     <style>
-        /* Background Setup */
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
-            z-index: 1;
         }
 
         /* Brick-Style Background */
@@ -23,52 +21,57 @@
             left: 0;
             right: 0;
             bottom: 0;
-            z-index: 0;
+            z-index: 1;
             display: flex;
             flex-direction: column;
         }
 
+        .brick-row {
+            height: 40px; /* Smaller height to fit more rows */
+            display: flex;
+            position: relative;
+        }
+
         .brick {
-            position: absolute;
-            width: 200%; /* Make brick wider to prevent gaps */
-            height: 50px;
+            width: 80px; /* Fixed width for each brick */
+            height: 100%;
+            flex-shrink: 0; /* Prevent brick shrinking */
         }
 
-        /* Individual brick animations */
-        .brick:nth-child(odd) {
-            animation: moveRight 10s linear infinite;
+        /* Row animations */
+        .brick-row:nth-child(odd) {
+            animation: moveRight 8s linear infinite;
         }
 
-        .brick:nth-child(even) {
-            animation: moveLeft 10s linear infinite;
+        .brick-row:nth-child(even) {
+            animation: moveLeft 8s linear infinite;
         }
 
         @keyframes moveRight {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
+            0% { transform: translateX(-80px); }
+            100% { transform: translateX(0px); }
         }
 
         @keyframes moveLeft {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { transform: translateX(0px); }
+            100% { transform: translateX(-80px); }
         }
 
-        /* Left Image */
+        /* Background Images */
         .left-image {
             position: absolute;
             top: 50%;
-            left: 0;
-            transform: translateY(-50%) scaleX(1.6); /* Increased from 1.3 to 1.6 (60% wider) */
-            z-index: -1;
+            left: 15%; /* Move right from 0 */
+            transform: translateY(-50%) scaleX(1.6);
+            z-index: 2; /* Above the brick background */
         }
 
-        /* Rest of your existing styles */
         .right-image {
             position: absolute;
             top: 50%;
             right: 0;
             transform: translateY(-50%);
-            z-index: -1;
+            z-index: 2; /* Above the brick background */
         }
 
         /* Fancy Title */
@@ -77,33 +80,24 @@
             top: 10%;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 4em;
+            font-size: 4.5em;
             font-family: 'Russo One', sans-serif;
-            font-weight: bold;
             text-align: center;
-            z-index: 2;
-            animation: colorChange 5s infinite;
+            z-index: 3;
+            color: #00FF00;
             text-shadow: 
-                0 0 10px rgba(255,255,255,0.8),
-                0 0 20px rgba(255,255,255,0.8),
-                0 0 30px rgba(255,255,255,0.8);
+                0 0 10px rgba(0,255,0,0.8),
+                0 0 20px rgba(0,255,0,0.8),
+                0 0 30px rgba(0,255,0,0.8);
         }
 
-        @keyframes colorChange {
-            0% { color: red; }
-            25% { color: blue; }
-            50% { color: green; }
-            75% { color: orange; }
-            100% { color: yellow; }
-        }
-
-        /* Button Container */
+        /* Button Container - Moved higher */
         .button-container {
             position: absolute;
-            top: 80%;
+            top: 70%; /* Changed from 80% */
             left: 50%;
             transform: translateX(-50%);
-            z-index: 2;
+            z-index: 3;
         }
 
         button {
@@ -122,7 +116,6 @@
             background-color: #45a049;
         }
 
-        /* Snake Game Styling */
         #snakeCanvas {
             display: none;
             position: absolute;
@@ -130,22 +123,17 @@
             left: 50%;
             transform: translate(-50%, -50%);
             border: 2px solid black;
-            z-index: 3;
+            z-index: 4;
         }
     </style>
 </head>
 <body>
-
     <!-- Background Brick-Style -->
     <div class="background">
-        <div class="brick" style="background-color: red; top: 0%;"></div>
-        <div class="brick" style="background-color: blue; top: 20%;"></div>
-        <div class="brick" style="background-color: green; top: 40%;"></div>
-        <div class="brick" style="background-color: yellow; top: 60%;"></div>
-        <div class="brick" style="background-color: orange; top: 80%;"></div>
+        <!-- JavaScript will generate the brick rows -->
     </div>
 
-    <!-- Left and Right Background Images -->
+    <!-- Background Images -->
     <div class="left-image">
         <img src="https://raw.githubusercontent.com/AlexLegoKS/kernalex/main/alex3.jfif" width="400" height="600" />
     </div>
@@ -167,9 +155,30 @@
     <!-- Snake Game Canvas -->
     <canvas id="snakeCanvas" width="400" height="400"></canvas>
 
-    <!-- Your existing JavaScript remains the same -->
     <script>
-        // Your existing JavaScript code...
+        // Generate brick rows
+        const background = document.querySelector('.background');
+        const colors = ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FFA500', '#800080', '#FF1493', '#00FFFF'];
+        const rowCount = 15; // More rows
+        const bricksPerRow = Math.ceil(window.innerWidth / 80) + 1; // Calculate bricks needed per row
+
+        for (let i = 0; i < rowCount; i++) {
+            const row = document.createElement('div');
+            row.className = 'brick-row';
+            
+            // Create enough bricks to fill the row plus one extra
+            for (let j = 0; j < bricksPerRow; j++) {
+                const brick = document.createElement('div');
+                brick.className = 'brick';
+                brick.style.backgroundColor = colors[i % colors.length];
+                row.appendChild(brick);
+            }
+            
+            background.appendChild(row);
+        }
+
+        // Your existing Snake game JavaScript code here
+        // ... (keep all the snake game code)
     </script>
 </body>
 </html>
