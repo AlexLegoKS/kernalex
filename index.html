@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Returns!</title>
+    <style>
+        /* Background Setup */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #f0f0f0;
+            z-index: 1;
+        }
+
+        .left-image, .right-image {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .left-image {
+            left: 0;
+        }
+
+        .right-image {
+            right: 0;
+        }
+
+        /* Fancy Title */
+        h1 {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4em;
+            font-weight: bold;
+            text-align: center;
+            z-index: 2;
+            animation: colorChange 5s infinite;
+        }
+
+        @keyframes colorChange {
+            0% { color: red; }
+            25% { color: blue; }
+            50% { color: green; }
+            75% { color: orange; }
+            100% { color: yellow; }
+        }
+
+        /* Button Styling */
+        .button-container {
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Snake Game Styling */
+        #snakeCanvas {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid black;
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Image Layout -->
+    <div class="background">
+        <div class="left-image">
+            <img src="https://github.com/AlexLegoKS/kernalex/alex3.jfif" width="400" height="600" />
+        </div>
+        <div class="right-image">
+            <img src="https://github.com/AlexLegoKS/kernalex/alex4.jpg" width="400" height="600" />
+        </div>
+    </div>
+
+    <!-- Title -->
+    <h1>Alex Returns!</h1>
+
+    <!-- Button Container -->
+    <div class="button-container">
+        <button onclick="window.location.href='https://github.com/AlexLegoKS/kernalex/download.jfif'">Nice Image</button>
+        <button onclick="window.location.href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'">Watch This</button>
+        <button onclick="window.location.href='https://www.facebook.com/rockinrodney5000/'">Alex's FB Page</button>
+        <button id="startGameBtn" onclick="toggleSnakeGame()">Start Snake Game</button>
+    </div>
+
+    <!-- Snake Game Canvas -->
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // Initialize Snake Game Variables
+        let gameStarted = false;
+        let canvas = document.getElementById("snakeCanvas");
+        let ctx = canvas.getContext("2d");
+        let snake;
+        let food;
+
+        // Snake game setup
+        function startSnakeGame() {
+            snake = [{ x: 20, y: 20 }];
+            food = generateFood();
+            gameStarted = true;
+            document.getElementById("startGameBtn").textContent = "Stop Game";
+            gameLoop();
+        }
+
+        function stopSnakeGame() {
+            gameStarted = false;
+            document.getElementById("startGameBtn").textContent = "Start Snake Game";
+        }
+
+        function toggleSnakeGame() {
+            if (gameStarted) {
+                stopSnakeGame();
+            } else {
+                startSnakeGame();
+            }
+        }
+
+        function gameLoop() {
+            if (!gameStarted) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawSnake();
+            drawFood();
+            moveSnake();
+            checkGameOver();
+            setTimeout(gameLoop, 100);
+        }
+
+        // Draw Snake
+        function drawSnake() {
+            ctx.fillStyle = "green";
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillRect(snake[i].x, snake[i].y, 20, 20);
+            }
+        }
+
+        // Draw Food
+        function drawFood() {
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, 20, 20);
+        }
+
+        // Move Snake
+        function moveSnake() {
+            let head = Object.assign({}, snake[0]);
+
+            // Movement logic goes here
+
+            // If snake eats food, grow snake
+            if (head.x === food.x && head.y === food.y) {
+                snake.push({}); // Placeholder for growth logic
+                food = generateFood();
+            }
+
+            // Move head and remove tail
+            snake.unshift(head);
+            snake.pop();
+        }
+
+        // Generate random food position
+        function generateFood() {
+            return {
+                x: Math.floor(Math.random() * (canvas.width / 20)) * 20,
+                y: Math.floor(Math.random() * (canvas.height / 20)) * 20
+            };
+        }
+
+        // Check if game over
+        function checkGameOver() {
+            let head = snake[0];
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                stopSnakeGame();
+                alert("Game Over!");
+            }
+        }
+
+        // Keyboard Controls for Snake
+        document.addEventListener('keydown', function(event) {
+            if (gameStarted) {
+                switch(event.key) {
+                    case 'ArrowUp': 
+                        // Change direction logic
+                        break;
+                    case 'ArrowDown':
+                        // Change direction logic
+                        break;
+                    case 'ArrowLeft':
+                        // Change direction logic
+                        break;
+                    case 'ArrowRight':
+                        // Change direction logic
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
