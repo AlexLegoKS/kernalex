@@ -124,6 +124,16 @@
             transform: translate(-50%, -50%);
             border: 2px solid black;
             z-index: 4;
+            background-color: white; /* Ensures canvas background is white */
+        }
+
+        /* Plaid style colorful boxes at the bottom */
+        .plaid-box {
+            position: absolute;
+            bottom: 0;
+            width: 100px;
+            height: 100px;
+            display: inline-block;
         }
     </style>
 </head>
@@ -142,18 +152,26 @@
     </div>
 
     <!-- Title -->
-    <h1>Alex Returns!</h1>
+    <h1 id="title">Alex Returns!</h1>
 
     <!-- Button Container -->
     <div class="button-container">
-        <button onclick="window.location.href='https://github.com/AlexLegoKS/kernalex/blob/main/download.jfif'">Nice Image</button>
-        <button onclick="window.location.href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'">Watch This</button>
+        <button onclick="window.location.href='https://raw.githubusercontent.com/AlexLegoKS/kernalex/main/download.jfif'">Nice Image</button>
+        <!-- Updated "Watch This" button to link to a direct sample video -->
+        <button onclick="window.location.href='https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4'">Watch This</button>
         <button onclick="window.location.href='https://www.facebook.com/rockinrodney5000/'">Alex's FB Page</button>
         <button id="startGameBtn" onclick="toggleSnakeGame()">Start Snake Game</button>
     </div>
 
     <!-- Snake Game Canvas -->
     <canvas id="snakeCanvas" width="400" height="400"></canvas>
+
+    <!-- Plaid Style Colorful Boxes -->
+    <div class="plaid-box" style="background-color: #FF0000;"></div>
+    <div class="plaid-box" style="background-color: #0000FF;"></div>
+    <div class="plaid-box" style="background-color: #FFFF00;"></div>
+    <div class="plaid-box" style="background-color: #00FF00;"></div>
+    <div class="plaid-box" style="background-color: #FF1493;"></div>
 
     <script>
         // Generate brick rows
@@ -177,8 +195,99 @@
             background.appendChild(row);
         }
 
-        // Your existing Snake game JavaScript code here
-        // ... (keep all the snake game code)
+        // Snake game logic
+        let snake = [{ x: 10, y: 10 }];
+        let direction = 'right';
+        let food = { x: 15, y: 15 };
+        let gameInterval;
+        const canvas = document.getElementById('snakeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function startGame() {
+            // Set the background color of the canvas to white
+            canvas.style.backgroundColor = 'white';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            snake = [{ x: 10, y: 10 }];
+            direction = 'right';
+            food = { x: 15, y: 15 };
+            gameInterval = setInterval(gameLoop, 100);
+        }
+
+        function stopGame() {
+            clearInterval(gameInterval);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            alert('Game Over!');
+        }
+
+        function gameLoop() {
+            moveSnake();
+            if (checkCollision()) stopGame();
+            clearCanvas();
+            drawSnake();
+            drawFood();
+        }
+
+        function moveSnake() {
+            const head = { ...snake[0] };
+            if (direction === 'up') head.y -= 1;
+            if (direction === 'down') head.y += 1;
+            if (direction === 'left') head.x -= 1;
+            if (direction === 'right') head.x += 1;
+
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                food = { x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20) };
+            } else {
+                snake.pop();
+            }
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) return true;
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) return true;
+            }
+            return false;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawSnake() {
+            snake.forEach(segment => {
+                ctx.fillStyle = 'green';
+                ctx.fillRect(segment.x * 20, segment.y * 20, 20, 20);
+            });
+        }
+
+        function drawFood() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x * 20, food.y * 20, 20, 20);
+        }
+
+        function toggleSnakeGame() {
+            const gameCanvas = document.getElementById('snakeCanvas');
+            gameCanvas.style.display = gameCanvas.style.display === 'none' ? 'block' : 'none';
+
+            if (gameCanvas.style.display === 'block') {
+                startGame();
+            } else {
+                stopGame();
+            }
+        }
+
+        // Title Color Alternation
+        const titleElement = document.getElementById('title');
+        const colorsForTitle = ['#0000FF', '#FF0000', '#00FF00', '#FFFF00', '#FFA500'];
+        let currentTitleColor = 0;
+
+        setInterval(() => {
+            titleElement.style.color = colorsForTitle[currentTitleColor];
+            currentTitleColor = (currentTitleColor + 1) % colorsForTitle.length;
+        }, 3000); // 3 seconds interval
     </script>
 </body>
 </html>
